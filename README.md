@@ -26,13 +26,12 @@ La API permite almacenar, consultar, editar y eliminar productos de supermercado
 4. Crea un Resource llamado exactamente: Productos
 5. Click en la X del lado derecho de los bloques dejando únicamente la fila de ID
 
-![Schema del proyecto en mockapi](<img width="1822" height="888" alt="MOCKAPI" src="https://github.com/user-attachments/assets/11dad8d4-f028-453d-983f-2a1f4aadc8e1" />
-)
+![Schema del proyecto en mockapi](https://github.com/user-attachments/assets/11dad8d4-f028-453d-983f-2a1f4aadc8e1)
 
 6. Crear nuevos elementos en Schema (campos del producto)
 7. Clic en Add field (botón azul)
 
-![Boton para agregar nuevos elementos](<img width="957" height="856" alt="image" src="https://github.com/user-attachments/assets/e805389d-a164-43f5-888d-734f203563cd" />)
+![Boton para agregar nuevos elementos](https://github.com/user-attachments/assets/e805389d-a164-43f5-888d-734f203563cd)
 
 Agrega los siguientes elementos:
   -Name
