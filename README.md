@@ -1,5 +1,6 @@
 # Clase-Práctica - Equipo 3
-## 🛒 Sesión Práctica: Comparación de Precios con MockAPI + Postman
+
+# 🛒 Sesión Práctica: Comparación de Precios con MockAPI + Postman
 
 ## 🎯 Objetivo
 Crear una API simulada con MockAPI para manejar productos y precios, y utilizar Postman para realizar el ciclo completo de gestión: **Crear, Consultar, Actualizar y Visualizar/Comparar precios gráficamente**.
@@ -13,7 +14,7 @@ Crear una API simulada con MockAPI para manejar productos y precios, y utilizar 
 2. Crea una cuenta o inicia sesión.
 3. Pulsa el botón **+ New Project**.
 4. **Name:** `ComparadorPrecios`
-5. **API Prefix:** `/Api/Tiendas`
+5. **API Prefix:** `Api/Tiendas`
 6. Pulsa **Create**.
 7. Haz clic sobre el proyecto recién creado para entrar.
 
@@ -63,9 +64,9 @@ Aquí agregaremos dos productos idénticos en tiendas diferentes para la prueba 
 
 ```json
 {
-  "Product": "Laptop A",
-  "Price": 550,
-  "Store": "Tienda A"
+  "product": "Laptop A",
+  "price": 550,
+  "store": "Tienda A"
 }
 ```
 6. Clic en **Send**.
@@ -79,9 +80,9 @@ Aquí agregaremos dos productos idénticos en tiendas diferentes para la prueba 
 
 ```json
 {
-  "Product": "Laptop A",
-  "Price": 490,
-  "Store": "Tienda B"
+  "product": "Laptop A",
+  "price": 490,
+  "store": "Tienda B"
 }
 ```
 6. Clic en **Send**.
@@ -94,7 +95,7 @@ Aquí agregaremos dos productos idénticos en tiendas diferentes para la prueba 
 
 ```json
 {
-  "Price": 450
+  "price": 450
 }
 ```
 5. Clic en **Send**.
@@ -113,99 +114,116 @@ Usaremos la herramienta **Visualizer** de Postman. Esto nos permitirá ver una g
 // ==========================================
 // CONFIGURACIÓN DE BÚSQUEDA
 // ==========================================
-// Escribe aquí el nombre del producto que quieres comparar.
-// Si lo dejas vacío (""), mostrará TODOS los productos.
-// Ejemplo: "Laptop A" o "Ball"
-var PRODUCTO_BUSCADO = "Laptop A";
+var producto_buscado = "Laptop A"; // Cambia esto para probar
 // ==========================================
-function obtenerValor(objeto, nombrePropiedad) {
+
+function obtener_valor(objeto, nombre_propiedad) {
     if (!objeto) return null;
-
-    var llaveEncontrada = Object.keys(objeto).find(key =>
-        key.toLowerCase() === nombrePropiedad.toLowerCase()
+    var llave_encontrada = Object.keys(objeto).find(key => 
+        key.toLowerCase() === nombre_propiedad.toLowerCase()
     );
-    return llaveEncontrada ? objeto[llaveEncontrada] : null;
+    return llave_encontrada ? objeto[llave_encontrada] : null;
 }
-var respuesta = pm.response.json();
-var listaCompleta = Array.isArray(respuesta) ? respuesta : [respuesta];
-var productosFiltrados = listaCompleta.filter(function(item) {
-    if (PRODUCTO_BUSCADO === "") return true;
 
-    var nombreItem = obtenerValor(item, "product") || "";
-    return nombreItem.toLowerCase().includes(PRODUCTO_BUSCADO.toLowerCase());
+var respuesta = pm.response.json();
+var lista_completa = Array.isArray(respuesta) ? respuesta : [respuesta];
+
+// Filtrado
+var productos_filtrados = lista_completa.filter(function(item) {
+    if (producto_buscado === "") return true;
+    var nombre_item = obtener_valor(item, "product") || "";
+    return nombre_item.toLowerCase().includes(producto_buscado.toLowerCase());
 });
-// 3. PREPARAR DATOS PARA LA GRÁFICA
-var nombresData = JSON.stringify(productosFiltrados.map(p => {
-    var nombre = obtenerValor(p, "product") || "Sin Nombre";
-    var tienda = obtenerValor(p, "store") || "Tienda X";
+
+// PREPARAR DATOS
+var nombres_data = JSON.stringify(productos_filtrados.map(p => {
+    var nombre = obtener_valor(p, "product") || "Sin Nombre"; 
+    var tienda = obtener_valor(p, "store") || "Tienda X";
     return nombre + " (" + tienda + ")";
 }));
-var preciosData = JSON.stringify(productosFiltrados.map(p => {
-    var precio = obtenerValor(p, "price");
+
+var precios_data = JSON.stringify(productos_filtrados.map(p => {
+    var precio = obtener_valor(p, "price");
     return Number(precio) || 0;
 }));
-var coloresData = JSON.stringify(productosFiltrados.map(p => {
-    var precio = Number(obtenerValor(p, "price")) || 0;
+
+var colores_data = JSON.stringify(productos_filtrados.map(p => {
+    var precio = Number(obtener_valor(p, "price")) || 0;
     return precio > 500 ? 'rgba(255, 99, 132, 0.7)' : 'rgba(75, 192, 192, 0.7)';
 }));
+
 var template = `
-<div style="background-color: #f4f4f4; padding: 20px; font-family: 'Segoe UI', sans-serif;">
-<h2 style="text-align: center; color: #333;">
-📊  Comparativa: ${PRODUCTO_BUSCADO === "" ? "Todos los Productos" : PRODUCTO_BUSCADO}
-</h2>
+<div style="background-color: #f4f4f4; padding: 20px; font-family: 'Segoe UI', sans-serif; min-height: 400px;">
+    
+    <h2 style="text-align: center; color: #333;">
+        📊  Comparativa: ${producto_buscado === "" ? "Todos los Productos" : producto_buscado}
+    </h2>
 
-<div style="background: white; padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-<canvas id="myChart" height="400"></canvas>
-</div>
+    <div id="chart-container" style="background: white; padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <canvas id="mi_grafica" height="400"></canvas>
+    </div>
+
+    <div id="no-data-msg" style="display: none; text-align: center; padding: 40px; background: white; border-radius: 8px; border: 2px dashed #ccc;">
+        <h3 style="color: #e74c3c;">⚠ No se encontraron resultados</h3>
+        <p style="color: #666; font-size: 16px;">
+            No hay productos que coincidan con la búsqueda: <strong>"${producto_buscado}"</strong>
+        </p>
+    </div>
+
 </div>
 
-<script src="[https://cdn.jsdelivr.net/npm/chart.js](https://cdn.jsdelivr.net/npm/chart.js)"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-var ctx = document.getElementById('myChart').getContext('2d');
+    // Datos recibidos desde Postman
+    var etiquetas = {{{nombres}}};
+    var datos = {{{precios}}};
+    var colores = {{{colores}}};
 
-// Datos recibidos desde Postman
-var etiquetas = {{{nombres}}};
-var datos = {{{precios}}};
-var colores = {{{colores}}};
-// Configuración de la gráfica
-var myChart = new Chart(ctx, {
-type: 'bar',
-data: {
-labels: etiquetas,
-datasets: [{
-label: 'Precio ($)',
-data: datos,
-backgroundColor: colores,
-borderColor: '#666',
-borderWidth: 1,
-borderRadius: 4
-}]
-},
-options: {
-responsive: true,
-maintainAspectRatio: false,
-plugins: {
-legend: { display: false },
-title: {
-display: true,
-text: etiquetas.length === 0 ? ' ⚠️  No se encontraron productos con ese nombre' : ''
-}
-},
-scales: {
-y: {
-beginAtZero: true,
-ticks: { callback: function(value) { return '$' + value; } }
-}
-}
-}
-});
+    // LOGICA DE VISUALIZACIÓN
+    if (etiquetas.length === 0) {
+        // Si no hay datos, ocultamos la gráfica y mostramos el mensaje
+        document.getElementById('chart-container').style.display = 'none';
+        document.getElementById('no-data-msg').style.display = 'block';
+    } else {
+        // Si hay datos, generamos la gráfica normalmente
+        var ctx = document.getElementById('mi_grafica').getContext('2d');
+        
+        var mi_grafica = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: etiquetas,
+                datasets: [{
+                    label: 'Precio ($)',
+                    data: datos,
+                    backgroundColor: colores,
+                    borderColor: '#666',
+                    borderWidth: 1,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { callback: function(value) { return '$' + value; } }
+                    }
+                }
+            }
+        });
+    }
 </script>
 `;
+
 pm.visualizer.set(template, {
-nombres: nombresData,
-precios: preciosData,
-colores: coloresData
+    nombres: nombres_data,
+    precios: precios_data,
+    colores: colores_data
 });
 ```
 
