@@ -231,3 +231,6 @@ pm.visualizer.set(template, {
 1. Después de pegar el código, haz clic en **Send** nuevamente en el GET - Ver Productos.
 2. En la parte inferior (donde ves la respuesta JSON), busca y haz clic en la pestaña que dice **Visualize**.
 3. ¡Ahí verás tu gráfica de barras ordenada! Podrás ver visualmente la diferencia entre el "Laptop A" de la Tienda A y el de la Tienda B.
+
+#Formulario de google
+[https://forms.gle/UV1o7raNecTpKn1m8](https://forms.gle/UV1o7raNecTpKn1m8)
